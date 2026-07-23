@@ -46,3 +46,6 @@ Nothing is sent anywhere. All notes live in your browser's IndexedDB (`PrepVault
 ## Notes on the Markdown engine
 
 To avoid pulling in any external library, PrepVault ships its own small Markdown → HTML renderer and a regex-based syntax highlighter (`js/markdown.js`). It covers everything the note format uses, but it is intentionally a subset of full CommonMark, not a complete spec implementation.
+
+## Run this project using this command
+- python3 -m http.server 8080
