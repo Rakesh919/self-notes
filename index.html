@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PrepVault — Java Backend Interview Prep</title>
+<meta name="description" content="PrepVault: an offline personal knowledge base for Java backend interview preparation.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230a0e14%22/><circle cx=%2250%22 cy=%2250%22 r=%2226%22 fill=%22none%22 stroke=%22%23d4a656%22 stroke-width=%228%22/><circle cx=%2250%22 cy=%2250%22 r=%228%22 fill=%22%23d4a656%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============================= SIDEBAR ============================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="vault-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="34" height="34">
+          <circle cx="24" cy="24" r="21" class="vault-ring-outer"></circle>
+          <circle cx="24" cy="24" r="21" class="vault-ring-spin"></circle>
+          <circle cx="24" cy="24" r="6.5" class="vault-core"></circle>
+        </svg>
+      </span>
+      <span class="brand-text">Prep<em>Vault</em></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item" data-view="dashboard" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+        Dashboard
+      </button>
+
+      <div class="sidebar-section-label">Subjects</div>
+      <div id="categoryList" class="category-list"></div>
+
+      <div class="sidebar-section-label">Library</div>
+      <button class="nav-item" data-view="pinned" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L14 8 L20 9 L15.5 13 L17 20 L12 16.5 L7 20 L8.5 13 L4 9 L10 8 Z"></path></svg>
+        Pinned
+      </button>
+      <button class="nav-item" data-view="favorites" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+        Favorites
+      </button>
+      <button class="nav-item" data-view="due" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        Due for Revision
+      </button>
+      <button class="nav-item" data-view="archived" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4"></rect><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"></path><path d="M10 12h4"></path></svg>
+        Archived
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span>Stored locally · IndexedDB</span>
+      <span class="sidebar-footer-sub">Nothing ever leaves this device</span>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim hidden" id="sidebarScrim"></div>
+
+  <!-- ============================= MAIN AREA ============================= -->
+  <div class="main-area">
+
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <button class="search-box" id="searchTrigger" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Search notes…</span>
+        <span class="kbd-hint">Ctrl F</span>
+      </button>
+
+      <div class="topbar-actions">
+        <button class="btn btn-accent" id="createNoteBtn" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <span>New Note</span>
+        </button>
+        <button class="btn btn-ghost icon-only-mobile" id="importBtn" type="button" title="Import notes">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Import</span>
+        </button>
+        <input type="file" id="importFileInput" accept="application/json" hidden>
+        <button class="btn btn-ghost icon-only-mobile" id="exportBtn" type="button" title="Export all notes">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span>Export</span>
+        </button>
+        <div class="topbar-divider"></div>
+        <button class="btn btn-ghost icon-only-mobile" id="backupBtn" type="button" title="Backup database">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14a9 3 0 0 0 18 0V5"></path></svg>
+          <span>Backup</span>
+        </button>
+        <button class="btn btn-ghost icon-only-mobile" id="restoreBtn" type="button" title="Restore database">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"></path><polyline points="3 4 3 9 8 9"></polyline></svg>
+          <span>Restore</span>
+        </button>
+        <input type="file" id="restoreFileInput" accept="application/json" hidden>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" id="themeToggleBtn" type="button" title="Toggle theme">🌙</button>
+        <button class="icon-btn" id="shortcutsBtn" type="button" title="Keyboard shortcuts">⌨</button>
+      </div>
+    </header>
+
+    <main class="content" id="mainContent">
+
+      <!-- ========================= DASHBOARD VIEW ========================= -->
+      <section class="view" id="dashboardView">
+        <div class="view-header">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="view-subtitle">Your Java backend interview knowledge base, at a glance.</p>
+          </div>
+        </div>
+
+        <div class="stat-cards">
+          <div class="stat-card">
+            <span class="stat-card-label">Total Notes</span>
+            <span class="stat-card-value" id="statTotalNotes">0</span>
+          </div>
+          <div class="stat-card stat-card-warning">
+            <span class="stat-card-label">Due Today</span>
+            <span class="stat-card-value" id="statDueToday">0</span>
+          </div>
+          <div class="stat-card stat-card-danger">
+            <span class="stat-card-label">Overdue Revisions</span>
+            <span class="stat-card-value" id="statPendingRevision">0</span>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="panel">
+            <h2 class="panel-title">Category Breakdown</h2>
+            <div id="categoryStats" class="category-stats"></div>
+          </div>
+
+          <div class="panel">
+            <h2 class="panel-title">Pinned Notes</h2>
+            <div id="pinnedNotesList" class="note-grid note-grid-compact"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2 class="panel-title">Recently Updated</h2>
+          <div id="recentNotesList" class="note-grid"></div>
+        </div>
+      </section>
+
+      <!-- ========================= LIST VIEW ========================= -->
+      <section class="view hidden" id="listView">
+        <div class="view-header">
+          <h1 id="listViewTitle">All Notes</h1>
+          <button class="btn btn-accent" id="createNoteBtnList" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>New Note</span>
+          </button>
+        </div>
+        <div id="noteListGrid" class="note-grid"></div>
+        <p class="empty-hint hidden" id="noteListEmpty">Nothing here yet. Notes you add to this view will show up here.</p>
+      </section>
+
+      <!-- ========================= EDITOR VIEW ========================= -->
+      <section class="view hidden" id="editorView">
+        <div class="editor-header">
+          <input type="text" id="noteTitleInput" class="note-title-input" placeholder="Untitled Note" maxlength="120">
+          <div class="editor-header-actions">
+            <span class="save-status" id="saveStatus">Saved</span>
+            <button class="icon-toggle-btn" id="pinNoteBtn" type="button" title="Pin note">📌</button>
+            <button class="icon-toggle-btn" id="favNoteBtn" type="button" title="Favorite note">⭐</button>
+            <button class="icon-toggle-btn" id="archiveNoteBtn" type="button" title="Archive note">🗄</button>
+            <button class="icon-toggle-btn danger" id="deleteNoteBtn" type="button" title="Delete note">🗑</button>
+          </div>
+        </div>
+
+        <div class="editor-meta-row">
+          <select id="noteCategorySelect" class="select-input"></select>
+          <input type="text" id="noteTagsInput" class="tags-input" placeholder="tags, comma, separated">
+        </div>
+
+        <div class="editor-stats-row">
+          <span><strong id="wordCountStat">0 words</strong></span>
+          <span><strong id="readingTimeStat">1 min read</strong></span>
+          <span>Created <strong id="createdAtStat">—</strong></span>
+          <span>Updated <strong id="updatedAtStat">—</strong></span>
+        </div>
+
+        <div class="revision-panel">
+          <div class="confidence-row">
+            <span class="revision-label">Confidence</span>
+            <div id="confidenceStars" class="confidence-stars"></div>
+          </div>
+          <div class="revision-stats">
+            <span>Last revision: <strong id="lastRevisionStat">—</strong></span>
+            <span>Next revision: <strong id="nextRevisionStat">—</strong></span>
+            <span>Revisions logged: <strong id="revisionCountStat">0</strong></span>
+          </div>
+          <button class="btn btn-accent" id="quickRevisionBtn" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Quick Revision
+          </button>
+        </div>
+
+        <div class="section-tabs" id="sectionTabs"></div>
+
+        <div class="editor-toolbar" id="editorToolbar">
+          <button data-action="bold" type="button" title="Bold"><strong>B</strong></button>
+          <button data-action="italic" type="button" title="Italic"><em>I</em></button>
+          <button data-action="strike" type="button" title="Strikethrough"><s>S</s></button>
+          <button data-action="code" type="button" title="Inline code">&lt;/&gt;</button>
+          <span class="toolbar-sep"></span>
+          <button data-action="h2" type="button" title="Heading">H</button>
+          <button data-action="quote" type="button" title="Quote">"</button>
+          <span class="toolbar-sep"></span>
+          <button data-action="ul" type="button" title="Bulleted list">•—</button>
+          <button data-action="ol" type="button" title="Numbered list">1.</button>
+          <button data-action="check" type="button" title="Checklist">☑</button>
+          <span class="toolbar-sep"></span>
+          <button data-action="link" type="button" title="Link">🔗</button>
+          <button data-action="image" type="button" title="Image">🖼</button>
+          <button data-action="table" type="button" title="Table">▦</button>
+          <button data-action="codeblock" type="button" title="Code block">{ }</button>
+
+          <div class="view-mode-switch">
+            <button class="view-mode-btn" data-mode="edit" type="button">Edit</button>
+            <button class="view-mode-btn active" data-mode="split" type="button">Split</button>
+            <button class="view-mode-btn" data-mode="preview" type="button">Preview</button>
+          </div>
+        </div>
+
+        <div class="editor-panes" data-mode="split">
+          <textarea id="sectionTextarea" class="section-textarea" spellcheck="false"></textarea>
+          <div id="sectionPreview" class="section-preview markdown-body"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============================= COMMAND PALETTE ============================= -->
+<div class="overlay hidden" id="commandPalette">
+  <div class="command-box">
+    <div class="command-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="commandInput" placeholder="Search by title, tag, category or content…" autocomplete="off">
+      <button data-close-command type="button" class="icon-btn">✕</button>
+    </div>
+    <div id="commandResults" class="command-results"></div>
+  </div>
+</div>
+
+<!-- ============================= CONFIRM DIALOG ============================= -->
+<div class="overlay hidden" id="confirmDialog">
+  <div class="modal-box modal-box-sm">
+    <h3 class="modal-title">Are you sure?</h3>
+    <p class="modal-message">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close-modal type="button">Cancel</button>
+      <button class="btn btn-danger modal-confirm-btn" type="button">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= REVISION MODAL ============================= -->
+<div class="overlay hidden" id="revisionModal">
+  <div class="modal-box modal-box-sm">
+    <h3 class="modal-title">Log a Revision</h3>
+    <p class="modal-message">How confident do you feel about this topic right now? This sets your next revision date.</p>
+    <div class="revision-modal-stars"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close-modal type="button">Cancel</button>
+      <button class="btn btn-accent revision-submit-btn" type="button">Save Revision</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= SHORTCUTS MODAL ============================= -->
+<div class="overlay hidden" id="shortcutsModal">
+  <div class="modal-box modal-box-sm">
+    <h3 class="modal-title">Keyboard Shortcuts</h3>
+    <ul class="shortcuts-list">
+      <li><span>Create a new note</span><kbd>Ctrl</kbd>+<kbd>N</kbd></li>
+      <li><span>Save current note</span><kbd>Ctrl</kbd>+<kbd>S</kbd></li>
+      <li><span>Search notes</span><kbd>Ctrl</kbd>+<kbd>F</kbd></li>
+      <li><span>Toggle this help</span><kbd>Ctrl</kbd>+<kbd>/</kbd></li>
+      <li><span>Close any dialog</span><kbd>Esc</kbd></li>
+    </ul>
+    <div class="modal-actions">
+      <button class="btn btn-accent" data-close-modal type="button">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/utils.js"></script>
+<script src="js/db.js"></script>
+<script src="js/markdown.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/search.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
