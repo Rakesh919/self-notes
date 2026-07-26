@@ -50,14 +50,12 @@
   --border-strong: rgba(20, 20, 30, 0.18);
   --text: #1b1e27;
   --text-dim: #565d70;
-  --text-faint: #92970;
-  --text-faint: #969cad;
+  --text-faint: #7d8296;
   --accent: #b1791f;
   --accent-strong: #91600f;
   --accent-soft: rgba(177, 121, 31, 0.13);
   --accent-2: #157b70;
   --accent-2-soft: rgba(21, 123, 112, 0.12);
-  --text-faint: #7d8296;
   --danger: #c8392c;
   --danger-soft: rgba(200, 57, 44, 0.12);
   --success: #22824c;
@@ -70,6 +68,7 @@
 /* ---------------------------------- Reset ---------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; }
+html { overflow-x: hidden; }
 body {
   margin: 0;
   font-family: var(--font-body);
@@ -102,6 +101,8 @@ a:hover { text-decoration: underline; }
   display: flex;
   height: 100vh;
   width: 100vw;
+  max-width: 100%;
+  overflow: hidden;
   background:
     radial-gradient(1200px 600px at 15% -10%, rgba(217, 172, 95, 0.06), transparent 60%),
     radial-gradient(1000px 700px at 100% 0%, rgba(87, 207, 196, 0.05), transparent 55%),
@@ -228,7 +229,7 @@ a:hover { text-decoration: underline; }
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   flex-shrink: 0;
-  z-index: 20;
+  z-index: 45;
 }
 
 .search-box {
@@ -236,6 +237,7 @@ a:hover { text-decoration: underline; }
   align-items: center;
   gap: 9px;
   flex: 1;
+  min-width: 0;
   max-width: 380px;
   border: 1px solid var(--border);
   background: var(--surface-solid);
@@ -255,8 +257,8 @@ a:hover { text-decoration: underline; }
   color: var(--text-faint);
 }
 
-.topbar-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
-.topbar-divider { width: 1px; height: 22px; background: var(--border); margin: 0 2px; }
+.topbar-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
+.topbar-divider { width: 1px; height: 22px; background: var(--border); margin: 0 2px; flex-shrink: 0; }
 
 .btn {
   display: inline-flex;
@@ -287,8 +289,47 @@ a:hover { text-decoration: underline; }
 .icon-btn:hover { color: var(--text); border-color: var(--border-strong); }
 .mobile-only { display: none; }
 
+/* ---------------------------------- Topbar "more" menu (mobile) ------------- */
+/* Wraps the less-critical actions (Import/Export/Backup/Restore) so they can
+   collapse into a single dropdown on narrow screens. On desktop this whole
+   wrapper disappears from the box tree via display:contents, so the buttons
+   render exactly as plain inline topbar items, unchanged from before. */
+.topbar-more { position: relative; list-style: none; }
+.topbar-more > summary {
+  list-style: none;
+  cursor: pointer;
+}
+.topbar-more > summary::-webkit-details-marker,
+.topbar-more > summary::marker { display: none; content: ''; }
+.topbar-more-panel { display: none; }
+.topbar-more[open] > .topbar-more-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 13px;
+  padding: 8px;
+  box-shadow: var(--shadow-lg);
+  z-index: 60;
+  animation: modalIn 0.16s ease;
+}
+.topbar-more-panel .btn { width: 100%; justify-content: flex-start; }
+.topbar-more-panel .btn span { display: inline !important; }
+.topbar-more-panel .topbar-divider { display: none; }
+
+@media (min-width: 861px) {
+  .topbar-more,
+  .topbar-more-panel { display: contents; }
+  .topbar-more > summary { display: none; }
+}
+
 /* ---------------------------------- Content / views ------------------------- */
-.content { flex: 1; overflow-y: auto; padding: 26px 30px 60px; }
+.content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 26px 30px 60px; }
 .view { max-width: 1180px; margin: 0 auto; animation: viewIn 0.28s ease; }
 @keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -378,13 +419,13 @@ a:hover { text-decoration: underline; }
 
 /* ---------------------------------- Editor ----------------------------------- */
 #editorView { max-width: 940px; }
-.editor-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.editor-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
 .note-title-input {
-  flex: 1; background: transparent; border: none; font-family: var(--font-display);
+  flex: 1; min-width: 0; background: transparent; border: none; font-family: var(--font-display);
   font-size: 25px; font-weight: 700; color: var(--text); padding: 4px 2px;
 }
 .note-title-input:focus { outline: none; }
-.editor-header-actions { display: flex; align-items: center; gap: 6px; }
+.editor-header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .save-status { font-size: 11.5px; color: var(--text-faint); margin-right: 6px; transition: color 0.2s ease; }
 .save-status.saving { color: var(--accent); }
 
@@ -397,13 +438,13 @@ a:hover { text-decoration: underline; }
 .icon-toggle-btn.active { filter: none; border-color: var(--accent); background: var(--accent-soft); }
 .icon-toggle-btn.danger:hover { filter: none; border-color: var(--danger); background: var(--danger-soft); }
 
-.editor-meta-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.editor-meta-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
 .select-input, .tags-input {
   background: var(--surface-solid); border: 1px solid var(--border); border-radius: 9px;
   padding: 7px 11px; font-size: 12.5px; color: var(--text-dim);
 }
 .select-input { flex-shrink: 0; }
-.tags-input { flex: 1; }
+.tags-input { flex: 1; min-width: 140px; }
 .select-input:focus, .tags-input:focus { outline: none; border-color: var(--border-strong); color: var(--text); }
 
 .editor-stats-row { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--text-faint); margin-bottom: 14px; }
@@ -459,17 +500,17 @@ a:hover { text-decoration: underline; }
 .section-textarea {
   background: var(--surface-solid); border: 1px solid var(--border); border-radius: 13px;
   padding: 16px; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.7; color: var(--text);
-  resize: vertical; min-height: 420px;
+  resize: vertical; min-height: 420px; width: 100%;
 }
 .section-textarea:focus { outline: none; border-color: var(--border-strong); }
 
 .section-preview {
   background: var(--surface); border: 1px solid var(--border); border-radius: 13px;
-  padding: 18px 20px; overflow-y: auto; min-height: 420px;
+  padding: 18px 20px; overflow-y: auto; overflow-x: hidden; min-height: 420px;
 }
 
 /* ---------------------------------- Markdown rendered output ----------------- */
-.markdown-body { font-size: 14px; line-height: 1.7; color: var(--text); }
+.markdown-body { font-size: 14px; line-height: 1.7; color: var(--text); overflow-wrap: anywhere; }
 .markdown-body .md-h1 { font-size: 22px; margin: 18px 0 10px; }
 .markdown-body .md-h2 { font-size: 19px; margin: 16px 0 8px; }
 .markdown-body .md-h3 { font-size: 16px; margin: 14px 0 6px; }
@@ -549,7 +590,7 @@ a:hover { text-decoration: underline; }
 .conf-star-lg.filled { color: var(--accent); }
 
 .shortcuts-list { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.shortcuts-list li { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-dim); }
+.shortcuts-list li { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-dim); gap: 12px; }
 kbd {
   font-family: var(--font-mono); background: var(--surface-strong); border: 1px solid var(--border-strong);
   border-radius: 5px; padding: 2px 7px; font-size: 11px; color: var(--text);
@@ -559,7 +600,7 @@ kbd {
 .command-box { max-width: 620px; padding: 0; overflow: hidden; }
 .command-input-row { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--border); color: var(--text-faint); }
 .command-input-row input {
-  flex: 1; background: none; border: none; font-size: 15px; color: var(--text);
+  flex: 1; min-width: 0; background: none; border: none; font-size: 15px; color: var(--text);
 }
 .command-input-row input:focus { outline: none; }
 .command-results { max-height: 55vh; overflow-y: auto; padding: 8px; }
@@ -573,11 +614,12 @@ kbd {
 .command-result-snippet { font-size: 12px; color: var(--text-faint); flex-basis: 100%; }
 
 /* ---------------------------------- Toasts ----------------------------------- */
-.toast-container { position: fixed; bottom: 22px; right: 22px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+.toast-container { position: fixed; bottom: 22px; right: 22px; left: 16px; z-index: 200; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .toast {
   background: var(--bg-elevated); border: 1px solid var(--border-strong); color: var(--text);
   padding: 11px 18px; border-radius: 11px; font-size: 13px; box-shadow: var(--shadow-lg);
   opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: 100%;
 }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast-error { border-color: var(--danger); }
@@ -612,4 +654,13 @@ kbd {
   .note-grid { grid-template-columns: 1fr; }
   .view-header h1 { font-size: 21px; }
   .note-title-input { font-size: 20px; }
+}
+
+@media (max-width: 430px) {
+  /* At the very narrowest widths, drop the "New Note" label text too so the
+     topbar (sidebar toggle + search + New Note + More + theme + shortcuts)
+     never has to fight for space or force a horizontal scrollbar. */
+  #createNoteBtn span { display: none; }
+  #createNoteBtn { padding: 8px; }
+  .topbar-more-panel { min-width: 160px; }
 }
