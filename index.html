@@ -82,25 +82,35 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           <span>New Note</span>
         </button>
-        <button class="btn btn-ghost icon-only-mobile" id="importBtn" type="button" title="Import notes">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>Import</span>
-        </button>
-        <input type="file" id="importFileInput" accept="application/json" hidden>
-        <button class="btn btn-ghost icon-only-mobile" id="exportBtn" type="button" title="Export all notes">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span>Export</span>
-        </button>
-        <div class="topbar-divider"></div>
-        <button class="btn btn-ghost icon-only-mobile" id="backupBtn" type="button" title="Backup database">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14a9 3 0 0 0 18 0V5"></path></svg>
-          <span>Backup</span>
-        </button>
-        <button class="btn btn-ghost icon-only-mobile" id="restoreBtn" type="button" title="Restore database">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"></path><polyline points="3 4 3 9 8 9"></polyline></svg>
-          <span>Restore</span>
-        </button>
-        <input type="file" id="restoreFileInput" accept="application/json" hidden>
+
+        <!-- Secondary actions: inline on desktop, collapsed into a "More" menu on mobile.
+             The <details> wrapper needs no JS — CSS `display:contents` dissolves it on
+             desktop so the buttons behave exactly as before. -->
+        <details class="topbar-more">
+          <summary class="icon-btn" title="More actions" aria-label="More actions">⋯</summary>
+          <div class="topbar-more-panel">
+            <button class="btn btn-ghost icon-only-mobile" id="importBtn" type="button" title="Import notes">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Import</span>
+            </button>
+            <input type="file" id="importFileInput" accept="application/json" hidden>
+            <button class="btn btn-ghost icon-only-mobile" id="exportBtn" type="button" title="Export all notes">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Export</span>
+            </button>
+            <div class="topbar-divider"></div>
+            <button class="btn btn-ghost icon-only-mobile" id="backupBtn" type="button" title="Backup database">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14a9 3 0 0 0 18 0V5"></path></svg>
+              <span>Backup</span>
+            </button>
+            <button class="btn btn-ghost icon-only-mobile" id="restoreBtn" type="button" title="Restore database">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"></path><polyline points="3 4 3 9 8 9"></polyline></svg>
+              <span>Restore</span>
+            </button>
+            <input type="file" id="restoreFileInput" accept="application/json" hidden>
+          </div>
+        </details>
+
         <div class="topbar-divider"></div>
         <button class="icon-btn" id="themeToggleBtn" type="button" title="Toggle theme">🌙</button>
         <button class="icon-btn" id="shortcutsBtn" type="button" title="Keyboard shortcuts">⌨</button>
