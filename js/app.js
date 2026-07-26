@@ -28,6 +28,7 @@
     els.sidebarToggle = document.getElementById('sidebarToggle');
     els.sidebar = document.getElementById('sidebar');
     els.sidebarScrim = document.getElementById('sidebarScrim');
+    els.topbarMore = document.querySelector('.topbar-more');
   }
 
   /**
@@ -234,6 +235,7 @@
         document.getElementById('confirmDialog').classList.add('hidden');
         document.getElementById('revisionModal').classList.add('hidden');
         document.getElementById('shortcutsModal').classList.add('hidden');
+        if (els.topbarMore) els.topbarMore.removeAttribute('open');
       }
       return;
     }
@@ -271,16 +273,24 @@
       const file = els.importFileInput.files[0];
       if (file) importNotesFromFile(file);
       els.importFileInput.value = '';
+      if (els.topbarMore) els.topbarMore.removeAttribute('open');
     });
 
-    els.exportBtn.addEventListener('click', exportAllNotes);
+    els.exportBtn.addEventListener('click', () => {
+      exportAllNotes();
+      if (els.topbarMore) els.topbarMore.removeAttribute('open');
+    });
 
-    els.backupBtn.addEventListener('click', backupDatabase);
+    els.backupBtn.addEventListener('click', () => {
+      backupDatabase();
+      if (els.topbarMore) els.topbarMore.removeAttribute('open');
+    });
     els.restoreBtn.addEventListener('click', () => els.restoreFileInput.click());
     els.restoreFileInput.addEventListener('change', () => {
       const file = els.restoreFileInput.files[0];
       if (file) restoreDatabase(file);
       els.restoreFileInput.value = '';
+      if (els.topbarMore) els.topbarMore.removeAttribute('open');
     });
 
     els.themeToggleBtn.addEventListener('click', async () => {
@@ -314,6 +324,13 @@
     els.sidebarScrim?.addEventListener('click', () => {
       els.sidebar.classList.remove('open');
       els.sidebarScrim.classList.add('hidden');
+    });
+
+    // Close the mobile "more actions" menu when tapping outside of it.
+    document.addEventListener('click', (e) => {
+      if (els.topbarMore && els.topbarMore.open && !els.topbarMore.contains(e.target)) {
+        els.topbarMore.removeAttribute('open');
+      }
     });
 
     document.addEventListener('keydown', onGlobalKeydown);
